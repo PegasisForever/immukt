@@ -24,6 +24,16 @@ class DraftDataClass<T : DataClass>(
         assert(data::class.isData)
     }
 
+    // get normal value
+    operator fun <V> get(key: KProperty1<T, V>): V {
+        val getPath = buildList { addAll(path); add(key.name) }
+        return if (changeCache.containsKey(getPath)) {
+            changeCache[getPath] as V
+        } else {
+            key.get(data)
+        }
+    }
+
     // get data class
     operator fun <V : DataClass> get(key: KProperty1<T, V>): DraftDataClass<V> {
         val getPath = buildList { addAll(path); add(key.name) }
@@ -50,21 +60,11 @@ class DraftDataClass<T : DataClass>(
         val getPath = buildList { addAll(path); add(key.name) }
         val cached = changeCache[getPath]
         return when (cached) {
-            null -> constructor(key.get(data))
-            is R -> cached
-            else -> constructor(cached as V)
+            null -> constructor(key.get(data))  // not cached
+            is R -> cached                      // cached draft
+            else -> constructor(cached as V)    // cached value
         }.also {
             changeCache[getPath] = it
-        }
-    }
-
-    // get normal value
-    operator fun <V> get(key: KProperty1<T, V>): V {
-        val getPath = buildList { addAll(path); add(key.name) }
-        return if (changeCache.containsKey(getPath)) {
-            changeCache[getPath] as V
-        } else {
-            key.get(data)
         }
     }
 
@@ -101,7 +101,7 @@ class DraftDataClass<T : DataClass>(
     }
 
     override fun toString(): String {
-        return "DraftDataClass<${produce()}>"
+        return "DraftDataClass(${produce()})"
     }
 
     override fun equals(other: Any?): Boolean {
