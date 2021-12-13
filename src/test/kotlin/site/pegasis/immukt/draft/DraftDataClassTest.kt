@@ -239,6 +239,39 @@ class DraftDataClassTest {
     }
 
     @Test
+    fun `modify nested data set`() {
+        val finalData = Sample(
+            10,
+            Nested("awa"),
+            listOf(1, 2, 3, 4, 5),
+            listOf(Nested("a"), Nested("b"), Nested("c")),
+            mapOf("a" to 1, "b" to 2, "c" to 3),
+            mapOf("a" to Nested("ovo"), "b" to Nested("qvq"), "c" to Nested("uwu")),
+            setOf(1, 2, 3, 4, 5),
+            setOf(Nested("a"), Nested("d")),
+        )
+
+        assertDraftData(finalData) {
+            val set = it[Sample::dataSet]
+            assertEquals(setOf(Nested("a"), Nested("b"), Nested("c")).mapToDraft(), set)
+
+            set.removeAllData(setOf(Nested("b"), Nested("c")))
+            set.add(Nested("d"))
+            assertEquals(setOf(Nested("a"), Nested("d")).mapToDraft(), it[Sample::dataSet])
+        }
+
+        assertDraftData(finalData) {
+            it[Sample::dataSet] = setOf(Nested("a"), Nested("c"))
+            val set = it[Sample::dataSet]
+
+            set.removeAllData(setOf(Nested("b"), Nested("c")))
+            set.add(Nested("d"))
+            assertEquals(setOf(Nested("a"), Nested("d")).mapToDraft(), it[Sample::dataSet])
+        }
+    }
+
+
+    @Test
     fun equals() {
         assertEquals(
             data.draft.also {

@@ -17,7 +17,7 @@ class ValueDraftMapTest {
             "d" to 5,
         )
 
-        ValueDraftMap(map).also {
+        ValueDraftMap.from(map).also {
             assertEquals(map, it)
 
             it["c"] = 4

@@ -8,7 +8,7 @@ class ValueDraftListTest {
     fun produce() {
         val list = listOf(1, 2, 3)
         val finalList = listOf(2, 3, 4)
-        ValueDraftList(list).also {
+        ValueDraftList.from(list).also {
             assertEquals(list, it)
 
             it.add(4)
