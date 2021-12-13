@@ -112,6 +112,6 @@ class DraftDataClass<T : DataClass>(
     }
 
     override fun hashCode(): Int {
-        return produce().hashCode()
+        return produce().hashCode().inv()
     }
 }
