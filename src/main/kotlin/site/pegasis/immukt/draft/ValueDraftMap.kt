@@ -4,7 +4,7 @@ import site.pegasis.immukt.Producible
 import site.pegasis.immukt.toUnmodifiable
 
 // draft map K -> value
-class ValueDraftMap<T : Map<K, V>, K, V>(map: T) : HashMap<K, V>(), Producible<Map<K, V>> {
+class ValueDraftMap<T : Map<K, V>, K, V>(map: T) : HashMap<K, V>(map.size), Producible<Map<K, V>> {
     init {
         super.putAll(map)
     }

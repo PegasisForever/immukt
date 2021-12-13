@@ -5,7 +5,7 @@ import site.pegasis.immukt.Producible
 import site.pegasis.immukt.toUnmodifiable
 
 // draft list for data classes
-class DataDraftList<T : List<I>, I : DataClass>(list: T) : ArrayList<DraftDataClass<I>>(), Producible<List<I>> {
+class DataDraftList<T : List<I>, I : DataClass>(list: T) : ArrayList<DraftDataClass<I>>(list.size), Producible<List<I>> {
     init {
         super.addAll(list.map { DraftDataClass(it) })
     }
@@ -20,7 +20,7 @@ class DataDraftList<T : List<I>, I : DataClass>(list: T) : ArrayList<DraftDataCl
         TODO("Not yet implemented")
     }
 
-    fun containsAllList(elements: Collection<I>): Boolean {
+    fun containsAllData(elements: Collection<I>): Boolean {
         TODO("Not yet implemented")
     }
 
@@ -58,27 +58,47 @@ class DataDraftList<T : List<I>, I : DataClass>(list: T) : ArrayList<DraftDataCl
         super.add(index, DraftDataClass(element.data))
     }
 
-    fun addAllList(index: Int, elements: Collection<I>): Boolean {
+    fun addAllData(index: Int, elements: Collection<I>): Boolean {
         TODO("Not yet implemented")
     }
 
-    fun addAllList(elements: Collection<I>): Boolean {
+    override fun addAll(index: Int, elements: Collection<DraftDataClass<I>>): Boolean {
+        TODO()
+    }
+
+    fun addAllData(elements: Collection<I>): Boolean {
         TODO("Not yet implemented")
+    }
+
+    override fun addAll(elements: Collection<DraftDataClass<I>>): Boolean {
+        TODO()
     }
 
     fun remove(element: I): Boolean {
         TODO("Not yet implemented")
     }
 
-    fun removeAllList(elements: Collection<I>): Boolean {
+    override fun remove(element: DraftDataClass<I>): Boolean {
+        TODO()
+    }
+
+    fun removeAllData(elements: Collection<I>): Boolean {
         TODO("Not yet implemented")
     }
 
-    fun retainAllList(elements: Collection<I>): Boolean {
+    override fun removeAll(elements: Collection<DraftDataClass<I>>): Boolean {
+        TODO()
+    }
+
+    fun retainAllData(elements: Collection<I>): Boolean {
         TODO("Not yet implemented")
     }
 
-    override fun subList(fromIndex: Int, toIndex: Int): MutableList<DraftDataClass<I>> {
+    override fun retainAll(elements: Collection<DraftDataClass<I>>): Boolean {
+        TODO()
+    }
+
+    override fun subList(fromIndex: Int, toIndex: Int): DataDraftList<T,I> {
         TODO("Not yet implemented")
     }
 }

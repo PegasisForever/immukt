@@ -2,24 +2,16 @@ package site.pegasis.immukt.draft
 
 import site.pegasis.immukt.DataClass
 import site.pegasis.immukt.Producible
-import java.util.HashMap
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 
-fun main() {
-    data class Data(val a:Int,val b:List<Data>):DataClass
-
-    val a=Data(0, emptyList())
-    a.produce {
-        val b = it[Data::b]
-
-    }
-}
-
 inline fun <T : DataClass> T.produce(recipe: (draft: DraftDataClass<T>) -> Unit): T {
     return DraftDataClass(this).apply(recipe).produce()
 }
+
+val <T : DataClass> T.draft: DraftDataClass<T>
+    get() = DraftDataClass(this)
 
 class DraftDataClass<T : DataClass>(
     val data: T,
