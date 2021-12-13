@@ -6,11 +6,16 @@ import site.pegasis.immukt.mapToSet
 import site.pegasis.immukt.toUnmodifiable
 
 // draft list for data classes
-class DataDraftList<T : List<I>, I : DataClass>(list: T) :
-    ArrayList<DraftDataClass<I>>(list.size),
+class DataDraftList<T : List<I>, I : DataClass>(private val list: MutableList<DraftDataClass<I>>) :
+    MutableList<DraftDataClass<I>> by list,
     Producible<List<I>> {
-    init {
-        super.addAll(list.map { DraftDataClass(it) })
+
+    companion object {
+        fun <T : List<I>, I : DataClass> from(list: T): DataDraftList<T, I> {
+            val arrayList = ArrayList<DraftDataClass<I>>(list.size)
+            arrayList.addAll(list.map { it.draft })
+            return DataDraftList(arrayList)
+        }
     }
 
     override fun produce(): List<I> {
@@ -20,55 +25,55 @@ class DataDraftList<T : List<I>, I : DataClass>(list: T) :
     }
 
     fun contains(element: I): Boolean {
-        return super.contains(element.draft)
+        return contains(element.draft)
     }
 
     fun containsAllData(elements: Collection<I>): Boolean {
-        return super.containsAll(elements.map { it.draft })
+        return containsAll(elements.map { it.draft })
     }
 
     operator fun set(index: Int, element: I): I {
-        super.set(index, element.draft)
+        set(index, element.draft)
         return element
     }
 
     fun indexOf(element: I): Int {
-        return super.indexOf(element.draft)
+        return indexOf(element.draft)
     }
 
     fun lastIndexOf(element: I): Int {
-        return super.lastIndexOf(element.draft)
+        return lastIndexOf(element.draft)
     }
 
     fun add(element: I): Boolean {
-        return super.add(element.draft)
+        return add(element.draft)
     }
 
     fun add(index: Int, element: I) {
-        super.add(index, element.draft)
+        add(index, element.draft)
     }
 
     fun addAllData(index: Int, elements: Collection<I>): Boolean {
-        return super.addAll(index, elements.map { it.draft })
+        return addAll(index, elements.map { it.draft })
     }
 
     fun addAllData(elements: Collection<I>): Boolean {
-        return super.addAll(elements.map { it.draft })
+        return addAll(elements.map { it.draft })
     }
 
     fun remove(element: I): Boolean {
-        return super.remove(element.draft)
+        return remove(element.draft)
     }
 
     fun removeAllData(elements: Collection<I>): Boolean {
-        return super.removeAll(elements.mapToSet { it.draft })
+        return removeAll(elements.mapToSet { it.draft })
     }
 
     fun retainAllData(elements: Collection<I>): Boolean {
-        return super.retainAll(elements.mapToSet { it.draft })
+        return retainAll(elements.mapToSet { it.draft })
     }
 
     override fun subList(fromIndex: Int, toIndex: Int): DataDraftList<T, I> {
-        TODO()
+        return DataDraftList(list.subList(fromIndex, toIndex))
     }
 }
