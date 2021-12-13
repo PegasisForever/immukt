@@ -3,7 +3,6 @@ package site.pegasis.immukt.draft
 import site.pegasis.immukt.DataClass
 import site.pegasis.immukt.mapToDraft
 import kotlin.test.Test
-import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 class DataDraftListTest {
@@ -259,8 +258,8 @@ class DataDraftListTest {
         )
 
         val draftList = DataDraftList.from(list).subList(1, 3)
-        assertContentEquals(finalList.mapToDraft(), draftList)
-        assertContentEquals(finalList, draftList.produce())
+        assertEquals(finalList.mapToDraft(), draftList)
+        assertEquals(finalList, draftList.produce())
     }
 
     private inline fun assertDraftList(
@@ -268,7 +267,7 @@ class DataDraftListTest {
         recipe: (draftList: DataDraftList<Sample>) -> Unit,
     ) {
         val draftList = DataDraftList.from(list).apply(recipe)
-        assertContentEquals(expectedList.mapToDraft(), draftList)
-        assertContentEquals(expectedList, draftList.produce())
+        assertEquals(expectedList.mapToDraft(), draftList)
+        assertEquals(expectedList, draftList.produce())
     }
 }

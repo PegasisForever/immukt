@@ -4,7 +4,7 @@ import site.pegasis.immukt.Producible
 import site.pegasis.immukt.toUnmodifiable
 
 // draft list for normal value
-class ValueDraftList<T : List<I>, I>(list: T) : ArrayList<I>(list.size), Producible<List<I>> {
+class ValueDraftList<I>(list: List<I>) : ArrayList<I>(list.size), Producible<List<I>> {
     init {
         super.addAll(list)
     }

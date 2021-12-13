@@ -1,7 +1,6 @@
 package site.pegasis.immukt.draft
 
 import site.pegasis.immukt.DataClass
-import site.pegasis.immukt.assertContentEquals
 import site.pegasis.immukt.mapToDraft
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,6 +16,8 @@ class DraftDataClassTest {
         val dataList: List<Nested>,
         val map: Map<String, Int>,
         val dataMap: Map<String, Nested>,
+        val set: Set<Int>,
+        val dataSet: Set<Nested>,
     ) : DataClass
 
     private val data = Sample(
@@ -25,7 +26,9 @@ class DraftDataClassTest {
         listOf(1, 2, 3, 4, 5),
         listOf(Nested("a"), Nested("b"), Nested("c")),
         mapOf("a" to 1, "b" to 2, "c" to 3),
-        mapOf("a" to Nested("ovo"), "b" to Nested("qvq"), "c" to Nested("uwu"))
+        mapOf("a" to Nested("ovo"), "b" to Nested("qvq"), "c" to Nested("uwu")),
+        setOf(1, 2, 3, 4, 5),
+        setOf(Nested("a"), Nested("b"), Nested("c")),
     )
 
     @Test
@@ -36,7 +39,9 @@ class DraftDataClassTest {
             listOf(1, 2, 3, 4, 5),
             listOf(Nested("a"), Nested("b"), Nested("c")),
             mapOf("a" to 1, "b" to 2, "c" to 3),
-            mapOf("a" to Nested("ovo"), "b" to Nested("qvq"), "c" to Nested("uwu"))
+            mapOf("a" to Nested("ovo"), "b" to Nested("qvq"), "c" to Nested("uwu")),
+            setOf(1, 2, 3, 4, 5),
+            setOf(Nested("a"), Nested("b"), Nested("c")),
         )
 
         assertDraftData(finalData) {
@@ -54,7 +59,9 @@ class DraftDataClassTest {
             listOf(1, 2, 3, 4, 5),
             listOf(Nested("a"), Nested("b"), Nested("c")),
             mapOf("a" to 1, "b" to 2, "c" to 3),
-            mapOf("a" to Nested("ovo"), "b" to Nested("qvq"), "c" to Nested("uwu"))
+            mapOf("a" to Nested("ovo"), "b" to Nested("qvq"), "c" to Nested("uwu")),
+            setOf(1, 2, 3, 4, 5),
+            setOf(Nested("a"), Nested("b"), Nested("c")),
         )
 
         assertDraftData(finalData) {
@@ -78,7 +85,9 @@ class DraftDataClassTest {
             listOf(1, 2, 3, 5, 6),
             listOf(Nested("a"), Nested("b"), Nested("c")),
             mapOf("a" to 1, "b" to 2, "c" to 3),
-            mapOf("a" to Nested("ovo"), "b" to Nested("qvq"), "c" to Nested("uwu"))
+            mapOf("a" to Nested("ovo"), "b" to Nested("qvq"), "c" to Nested("uwu")),
+            setOf(1, 2, 3, 4, 5),
+            setOf(Nested("a"), Nested("b"), Nested("c")),
         )
 
         assertDraftData(finalData) {
@@ -104,7 +113,9 @@ class DraftDataClassTest {
             listOf(1, 2, 3, 4, 5),
             listOf(Nested("z"), Nested("c"), Nested("d")),
             mapOf("a" to 1, "b" to 2, "c" to 3),
-            mapOf("a" to Nested("ovo"), "b" to Nested("qvq"), "c" to Nested("uwu"))
+            mapOf("a" to Nested("ovo"), "b" to Nested("qvq"), "c" to Nested("uwu")),
+            setOf(1, 2, 3, 4, 5),
+            setOf(Nested("a"), Nested("b"), Nested("c")),
         )
 
         assertDraftData(finalData) {
@@ -138,17 +149,19 @@ class DraftDataClassTest {
             listOf(1, 2, 3, 4, 5),
             listOf(Nested("a"), Nested("b"), Nested("c")),
             mapOf("a" to 0, "c" to 3, "d" to 4),
-            mapOf("a" to Nested("ovo"), "b" to Nested("qvq"), "c" to Nested("uwu"))
+            mapOf("a" to Nested("ovo"), "b" to Nested("qvq"), "c" to Nested("uwu")),
+            setOf(1, 2, 3, 4, 5),
+            setOf(Nested("a"), Nested("b"), Nested("c")),
         )
 
         assertDraftData(finalData) {
             val map = it[Sample::map]
-            assertContentEquals(mapOf("a" to 1, "b" to 2, "c" to 3), map)
+            assertEquals(mapOf("a" to 1, "b" to 2, "c" to 3), map)
 
             map["a"] = 0
             map.remove("b")
             map["d"] = 4
-            assertContentEquals(mapOf("a" to 0, "c" to 3, "d" to 4), it[Sample::map])
+            assertEquals(mapOf("a" to 0, "c" to 3, "d" to 4), it[Sample::map])
         }
 
         assertDraftData(finalData) {
@@ -157,7 +170,7 @@ class DraftDataClassTest {
 
             map.remove("b")
             map["d"] = 4
-            assertContentEquals(mapOf("a" to 0, "c" to 3, "d" to 4), it[Sample::map])
+            assertEquals(mapOf("a" to 0, "c" to 3, "d" to 4), it[Sample::map])
         }
     }
 
@@ -169,17 +182,19 @@ class DraftDataClassTest {
             listOf(1, 2, 3, 4, 5),
             listOf(Nested("a"), Nested("b"), Nested("c")),
             mapOf("a" to 1, "b" to 2, "c" to 3),
-            mapOf("a" to Nested("test"), "c" to Nested("uwu"), "e" to Nested("eve"))
+            mapOf("a" to Nested("test"), "c" to Nested("uwu"), "e" to Nested("eve")),
+            setOf(1, 2, 3, 4, 5),
+            setOf(Nested("a"), Nested("b"), Nested("c")),
         )
 
         assertDraftData(finalValue) {
             val map = it[Sample::dataMap]
-            assertContentEquals(mapOf("a" to Nested("ovo"), "b" to Nested("qvq"), "c" to Nested("uwu")).mapToDraft(), map)
+            assertEquals(mapOf("a" to Nested("ovo"), "b" to Nested("qvq"), "c" to Nested("uwu")).mapToDraft(), map)
 
             map["a"]!![Nested::str] = "test"
             map.remove("b", Nested("qvq"))
             map["e"] = Nested("eve")
-            assertContentEquals(mapOf("a" to Nested("test"), "c" to Nested("uwu"), "e" to Nested("eve")).mapToDraft(), it[Sample::dataMap])
+            assertEquals(mapOf("a" to Nested("test"), "c" to Nested("uwu"), "e" to Nested("eve")).mapToDraft(), it[Sample::dataMap])
         }
 
         assertDraftData(finalValue) {
@@ -188,7 +203,38 @@ class DraftDataClassTest {
 
             map.remove("b", Nested("qvq"))
             map["e"] = Nested("eve")
-            assertContentEquals(mapOf("a" to Nested("test"), "c" to Nested("uwu"), "e" to Nested("eve")).mapToDraft(), it[Sample::dataMap])
+            assertEquals(mapOf("a" to Nested("test"), "c" to Nested("uwu"), "e" to Nested("eve")).mapToDraft(), it[Sample::dataMap])
+        }
+    }
+
+    @Test
+    fun `modify nested value set`() {
+        val finalData = Sample(
+            10,
+            Nested("awa"),
+            listOf(1, 2, 3, 4, 5),
+            listOf(Nested("a"), Nested("b"), Nested("c")),
+            mapOf("a" to 1, "b" to 2, "c" to 3),
+            mapOf("a" to Nested("ovo"), "b" to Nested("qvq"), "c" to Nested("uwu")),
+            setOf(1, 3, 6),
+            setOf(Nested("a"), Nested("b"), Nested("c")),
+        )
+
+        assertDraftData(finalData) {
+            val set = it[Sample::set]
+            assertEquals(setOf(1, 2, 3, 4, 5), set)
+            set.removeAll(listOf(2, 4))
+            set.remove(5)
+            set.add(6)
+            assertEquals(setOf(1, 3, 6), it[Sample::set])
+        }
+
+        assertDraftData(finalData) {
+            it[Sample::set] = setOf(1, 3, 5)
+            val set = it[Sample::set]
+            set.remove(5)
+            set.add(6)
+            assertEquals(setOf(1, 3, 6), it[Sample::set])
         }
     }
 
@@ -222,7 +268,7 @@ class DraftDataClassTest {
     @Test
     fun toStr() {
         assertEquals(
-            "DraftDataClass(Sample(num=10, nested=Nested(str=awa), list=[1, 2, 3, 4, 5], dataList=[Nested(str=a), Nested(str=b), Nested(str=c)], map={a=1, b=2, c=3}, dataMap={a=Nested(str=ovo), b=Nested(str=qvq), c=Nested(str=uwu)}))",
+            "DraftDataClass(Sample(num=10, nested=Nested(str=awa), list=[1, 2, 3, 4, 5], dataList=[Nested(str=a), Nested(str=b), Nested(str=c)], map={a=1, b=2, c=3}, dataMap={a=Nested(str=ovo), b=Nested(str=qvq), c=Nested(str=uwu)}, set=[1, 2, 3, 4, 5], dataSet=[Nested(str=a), Nested(str=b), Nested(str=c)]))",
             data.draft.toString()
         )
     }

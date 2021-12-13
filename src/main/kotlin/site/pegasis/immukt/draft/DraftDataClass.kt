@@ -50,6 +50,9 @@ class DraftDataClass<T : DataClass>(
     // get value list
     operator fun <V : List<I>, I> get(key: KProperty1<T, V>) = getImpl(key, ::ValueDraftList)
 
+    // get value set
+    operator fun <V : Set<I>, I> get(key: KProperty1<T, V>) = getImpl(key, ValueDraftSet.Companion::from)
+
     // get data class map
     operator fun <V : Map<K, MV>, K, MV : DataClass> get(key: KProperty1<T, V>) = getImpl(key, DataDraftMap.Companion::from)
 

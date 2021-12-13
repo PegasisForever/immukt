@@ -1,7 +1,6 @@
 package site.pegasis.immukt.draft
 
 import site.pegasis.immukt.DataClass
-import site.pegasis.immukt.assertContentEquals
 import site.pegasis.immukt.mapToDraft
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -140,7 +139,7 @@ class DataDraftMapTest {
         recipe: (draftMap: DataDraftMap<String, Sample>) -> Unit,
     ) {
         val draftMap = DataDraftMap.from(map).apply(recipe)
-        assertContentEquals(expectedMap.mapToDraft(), draftMap)
-        assertContentEquals(expectedMap, draftMap.produce())
+        assertEquals(expectedMap.mapToDraft(), draftMap)
+        assertEquals(expectedMap, draftMap.produce())
     }
 }

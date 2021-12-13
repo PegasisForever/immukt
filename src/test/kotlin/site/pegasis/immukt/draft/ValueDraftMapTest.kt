@@ -1,6 +1,5 @@
 package site.pegasis.immukt.draft
 
-import site.pegasis.immukt.assertContentEquals
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -19,15 +18,15 @@ class ValueDraftMapTest {
         )
 
         ValueDraftMap(map).also {
-            assertContentEquals(map, it)
+            assertEquals(map, it)
 
             it["c"] = 4
             assertEquals(it["d"], null)
 
             it.remove("a")
             it["d"] = 5
-            assertContentEquals(finalMap, it)
-            assertContentEquals(finalMap, it.produce())
+            assertEquals(finalMap, it)
+            assertEquals(finalMap, it.produce())
         }
     }
 }
