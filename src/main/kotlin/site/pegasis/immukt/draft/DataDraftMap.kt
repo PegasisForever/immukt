@@ -5,9 +5,18 @@ import site.pegasis.immukt.Producible
 import site.pegasis.immukt.toUnmodifiable
 
 // draft map K -> data class
-class DataDraftMap<T : Map<K, V>, K, V : DataClass>(map: T) : HashMap<K, DraftDataClass<V>>(map.size), Producible<Map<K, V>> {
-    init {
-        super.putAll(map.mapValues { (_, value) -> DraftDataClass(value) })
+class DataDraftMap<K, V : DataClass>(private val map: MutableMap<K, DraftDataClass<V>>) :
+    MutableMap<K, DraftDataClass<V>> by map,
+    Producible<Map<K, V>> {
+
+    companion object {
+        fun <K, V : DataClass> from(fromMap: Map<K, V>): DataDraftMap<K, V> {
+            val map = HashMap<K, DraftDataClass<V>>(fromMap.size)
+            for ((key, value) in fromMap) {
+                map[key] = value.draft
+            }
+            return DataDraftMap(map)
+        }
     }
 
     override fun produce(): Map<K, V> {
@@ -25,11 +34,17 @@ class DataDraftMap<T : Map<K, V>, K, V : DataClass>(map: T) : HashMap<K, DraftDa
     }
 
     fun put(key: K, value: V): V? {
-        val prev = put(key, DraftDataClass(value))
+        val prev = put(key, value.draft)
         return prev?.produce()
     }
 
-    fun putAllMap(from: Map<out K, V>) {
-        TODO("Not yet implemented")
+    fun putAllData(from: Map<out K, V>) {
+        for ((key, value) in from) {
+            put(key, value)
+        }
+    }
+
+    fun remove(key: K, value: V): Boolean {
+        return remove(key, value.draft)
     }
 }

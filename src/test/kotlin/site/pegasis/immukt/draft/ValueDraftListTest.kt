@@ -3,7 +3,7 @@ package site.pegasis.immukt.draft
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 
-internal class ValueDraftListTest {
+class ValueDraftListTest {
     @Test
     fun produce() {
         val list = listOf(1, 2, 3)
@@ -13,8 +13,8 @@ internal class ValueDraftListTest {
 
             it.add(4)
             it.removeAt(0)
-            assertContentEquals(finalList, it)
 
+            assertContentEquals(finalList, it)
             assertContentEquals(finalList, it.produce())
         }
     }

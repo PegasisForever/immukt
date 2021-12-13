@@ -6,15 +6,17 @@ import site.pegasis.immukt.mapToSet
 import site.pegasis.immukt.toUnmodifiable
 
 // draft list for data classes
-class DataDraftList<T : List<I>, I : DataClass>(private val list: MutableList<DraftDataClass<I>>) :
+class DataDraftList<I : DataClass>(private val list: MutableList<DraftDataClass<I>>) :
     MutableList<DraftDataClass<I>> by list,
     Producible<List<I>> {
 
     companion object {
-        fun <T : List<I>, I : DataClass> from(list: T): DataDraftList<T, I> {
-            val arrayList = ArrayList<DraftDataClass<I>>(list.size)
-            arrayList.addAll(list.map { it.draft })
-            return DataDraftList(arrayList)
+        fun <I : DataClass> from(fromList: List<I>): DataDraftList<I> {
+            val list = ArrayList<DraftDataClass<I>>(fromList.size)
+            for (item in fromList) {
+                list.add(item.draft)
+            }
+            return DataDraftList(list)
         }
     }
 
@@ -73,7 +75,7 @@ class DataDraftList<T : List<I>, I : DataClass>(private val list: MutableList<Dr
         return retainAll(elements.mapToSet { it.draft })
     }
 
-    override fun subList(fromIndex: Int, toIndex: Int): DataDraftList<T, I> {
+    override fun subList(fromIndex: Int, toIndex: Int): DataDraftList<I> {
         return DataDraftList(list.subList(fromIndex, toIndex))
     }
 }

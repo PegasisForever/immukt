@@ -1,11 +1,12 @@
 package site.pegasis.immukt.draft
 
 import site.pegasis.immukt.DataClass
+import site.pegasis.immukt.mapToDraft
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
-internal class DataDraftListTest {
+class DataDraftListTest {
     data class Sample(val num: Int) : DataClass
 
     private val list = listOf(
@@ -16,9 +17,8 @@ internal class DataDraftListTest {
     )
 
     @Test
-    fun `do nothing produces identical lists`() {
-        val draftList = DataDraftList.from(list)
-        assertContentEquals(list, draftList.produce())
+    fun `do nothing produces identical list`() {
+        assertDraftList(list) {}
     }
 
     @Test
@@ -31,6 +31,7 @@ internal class DataDraftListTest {
             Sample(3),
             Sample(4),
         )
+
         assertDraftList(finalList) {
             it[0] = Sample(0)
             it.add(Sample(4))
@@ -40,6 +41,17 @@ internal class DataDraftListTest {
             it.removeAllData(listOf(Sample(2)))
             it.retainAllData(listOf(Sample(5), Sample(0), Sample(3), Sample(4), Sample(8)))
             it.subList(1, 3).add(Sample(9))
+        }
+
+        assertDraftList(finalList) {
+            it[0] = Sample(0).draft
+            it.add(Sample(4).draft)
+            it.add(1, Sample(5).draft)
+            it.addAll(2, listOf(Sample(6), Sample(7), Sample(8)).mapToDraft())
+            it.remove(Sample(7).draft)
+            it.removeAll(listOf(Sample(2)).mapToDraft())
+            it.retainAll(listOf(Sample(5), Sample(0), Sample(3), Sample(4), Sample(8)).mapToDraft())
+            it.subList(1, 3).add(Sample(9).draft)
         }
     }
 
@@ -52,9 +64,16 @@ internal class DataDraftListTest {
             Sample(3),
             Sample(5),
         )
+
         assertDraftList(finalList) {
             it[1][Sample::num] = 0
             it.add(1, Sample(4))
+            it.last()[Sample::num] = 5
+        }
+
+        assertDraftList(finalList) {
+            it[1][Sample::num] = 0
+            it.add(1, Sample(4).draft)
             it.last()[Sample::num] = 5
         }
     }
@@ -63,18 +82,26 @@ internal class DataDraftListTest {
     fun contains() {
         val draftList = DataDraftList.from(list)
         assert(draftList.contains(Sample(1)))
+        assert(draftList.contains(Sample(1).draft))
         assert(!draftList.contains(Sample(4)))
+        assert(!draftList.contains(Sample(4).draft))
+
         draftList.add(Sample(4))
         assert(draftList.contains(Sample(4)))
+        assert(draftList.contains(Sample(4).draft))
     }
 
     @Test
-    fun containsAllData() {
+    fun containsAll() {
         val draftList = DataDraftList.from(list)
         assert(draftList.containsAllData(list))
+        assert(draftList.containsAll(list.mapToDraft()))
         assert(!draftList.containsAllData(list + Sample(4)))
+        assert(!draftList.containsAll((list + Sample(4)).mapToDraft()))
+
         draftList.add(Sample(4))
         assert(draftList.containsAllData(list + Sample(4)))
+        assert(draftList.containsAll((list + Sample(4)).mapToDraft()))
     }
 
     @Test
@@ -89,6 +116,7 @@ internal class DataDraftListTest {
         assertDraftList(finalList) {
             it[0] = Sample(-1)
         }
+
         assertDraftList(finalList) {
             it[0] = Sample(-1).draft
         }
@@ -98,25 +126,33 @@ internal class DataDraftListTest {
     fun indexOf() {
         val draftList = DataDraftList.from(list)
         assertEquals(1, draftList.indexOf(Sample(2)))
+        assertEquals(1, draftList.indexOf(Sample(2).draft))
         draftList.removeAt(1)
         assertEquals(2, draftList.indexOf(Sample(2)))
+        assertEquals(2, draftList.indexOf(Sample(2).draft))
 
         assertEquals(-1, draftList.indexOf(Sample(4)))
+        assertEquals(-1, draftList.indexOf(Sample(4).draft))
         draftList.add(Sample(4))
         assertEquals(3, draftList.indexOf(Sample(4)))
+        assertEquals(3, draftList.indexOf(Sample(4).draft))
     }
 
     @Test
     fun lastIndexOf() {
         val draftList = DataDraftList.from(list)
         assertEquals(3, draftList.lastIndexOf(Sample(2)))
+        assertEquals(3, draftList.lastIndexOf(Sample(2).draft))
         draftList.removeAt(3)
         assertEquals(1, draftList.lastIndexOf(Sample(2)))
+        assertEquals(1, draftList.lastIndexOf(Sample(2).draft))
 
         assertEquals(-1, draftList.lastIndexOf(Sample(4)))
+        assertEquals(-1, draftList.lastIndexOf(Sample(4).draft))
         draftList.add(Sample(4))
-        draftList.add(Sample(4))
+        draftList.add(Sample(4).draft)
         assertEquals(4, draftList.lastIndexOf(Sample(4)))
+        assertEquals(4, draftList.lastIndexOf(Sample(4).draft))
     }
 
     @Test
@@ -192,6 +228,7 @@ internal class DataDraftListTest {
         assertDraftList(finalList) {
             it.removeAllData(listOf(Sample(2), Sample(1)))
         }
+
         assertDraftList(finalList) {
             it.removeAll(listOf(Sample(2).draft, Sample(1).draft))
         }
@@ -208,6 +245,7 @@ internal class DataDraftListTest {
         assertDraftList(finalList) {
             it.retainAllData(listOf(Sample(2), Sample(3)))
         }
+
         assertDraftList(finalList) {
             it.retainAll(listOf(Sample(2).draft, Sample(3).draft))
         }
@@ -221,16 +259,16 @@ internal class DataDraftListTest {
         )
 
         val draftList = DataDraftList.from(list).subList(1, 3)
-        assertContentEquals(finalList.map { it.draft }, draftList)
+        assertContentEquals(finalList.mapToDraft(), draftList)
         assertContentEquals(finalList, draftList.produce())
     }
 
     private inline fun assertDraftList(
-        finalList: List<Sample>,
-        recipe: (draftList: DataDraftList<List<Sample>, Sample>) -> Unit,
+        expectedList: List<Sample>,
+        recipe: (draftList: DataDraftList<Sample>) -> Unit,
     ) {
         val draftList = DataDraftList.from(list).apply(recipe)
-        assertContentEquals(finalList.map { it.draft }, draftList)
-        assertContentEquals(finalList, draftList.produce())
+        assertContentEquals(expectedList.mapToDraft(), draftList)
+        assertContentEquals(expectedList, draftList.produce())
     }
 }

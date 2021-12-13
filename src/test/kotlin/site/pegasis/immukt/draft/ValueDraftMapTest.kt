@@ -4,7 +4,7 @@ import site.pegasis.immukt.assertContentEquals
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-internal class ValueDraftMapTest {
+class ValueDraftMapTest {
     @Test
     fun produce() {
         val map = mapOf(
@@ -23,10 +23,10 @@ internal class ValueDraftMapTest {
 
             it["c"] = 4
             assertEquals(it["d"], null)
+
             it.remove("a")
             it["d"] = 5
             assertContentEquals(finalMap, it)
-
             assertContentEquals(finalMap, it.produce())
         }
     }

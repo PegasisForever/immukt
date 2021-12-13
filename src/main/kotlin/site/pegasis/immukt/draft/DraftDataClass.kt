@@ -10,7 +10,7 @@ inline fun <T : DataClass> T.produce(recipe: (draft: DraftDataClass<T>) -> Unit)
     return DraftDataClass(this).apply(recipe).produce()
 }
 
-val <T : DataClass> T.draft: DraftDataClass<T>
+inline val <T : DataClass> T.draft: DraftDataClass<T>
     get() = DraftDataClass(this)
 
 class DraftDataClass<T : DataClass>(
@@ -41,7 +41,7 @@ class DraftDataClass<T : DataClass>(
     operator fun <V : List<I>, I> get(key: KProperty1<T, V>) = getImpl(key, ::ValueDraftList)
 
     // get data class map
-    operator fun <V : Map<K, MV>, K, MV : DataClass> get(key: KProperty1<T, V>) = getImpl(key, ::DataDraftMap)
+    operator fun <V : Map<K, MV>, K, MV : DataClass> get(key: KProperty1<T, V>) = getImpl(key, DataDraftMap.Companion::from)
 
     // get value map
     operator fun <V : Map<K, MV>, K, MV> get(key: KProperty1<T, V>) = getImpl(key, ::ValueDraftMap)
