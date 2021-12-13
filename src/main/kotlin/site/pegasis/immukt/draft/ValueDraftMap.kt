@@ -4,12 +4,19 @@ import site.pegasis.immukt.Producible
 import site.pegasis.immukt.toUnmodifiable
 
 // draft map K -> value
-class ValueDraftMap<K, V>(map: Map<K, V>) : HashMap<K, V>(map.size), Producible<Map<K, V>> {
-    init {
-        super.putAll(map)
+class ValueDraftMap<K, V>(private val map: MutableMap<K, V>) :
+    MutableMap<K, V> by map,
+    Producible<Map<K, V>> {
+
+    companion object {
+        fun <K, V> from(fromMap: Map<K, V>): ValueDraftMap<K, V> {
+            val map = HashMap<K, V>(fromMap.size)
+            map.putAll(fromMap)
+            return ValueDraftMap(map)
+        }
     }
 
     override fun produce(): Map<K, V> {
-        return this.toUnmodifiable()
+        return map.toUnmodifiable()
     }
 }

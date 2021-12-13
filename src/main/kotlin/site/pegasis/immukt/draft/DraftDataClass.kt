@@ -48,7 +48,7 @@ class DraftDataClass<T : DataClass>(
     operator fun <V : List<I>, I : DataClass> get(key: KProperty1<T, V>) = getImpl(key, DataDraftList.Companion::from)
 
     // get value list
-    operator fun <V : List<I>, I> get(key: KProperty1<T, V>) = getImpl(key, ::ValueDraftList)
+    operator fun <V : List<I>, I> get(key: KProperty1<T, V>) = getImpl(key, ValueDraftList.Companion::from)
 
     // get value set
     operator fun <V : Set<I>, I> get(key: KProperty1<T, V>) = getImpl(key, ValueDraftSet.Companion::from)
@@ -57,7 +57,7 @@ class DraftDataClass<T : DataClass>(
     operator fun <V : Map<K, MV>, K, MV : DataClass> get(key: KProperty1<T, V>) = getImpl(key, DataDraftMap.Companion::from)
 
     // get value map
-    operator fun <V : Map<K, MV>, K, MV> get(key: KProperty1<T, V>) = getImpl(key, ::ValueDraftMap)
+    operator fun <V : Map<K, MV>, K, MV> get(key: KProperty1<T, V>) = getImpl(key, ValueDraftMap.Companion::from)
 
     private inline fun <V, reified R> getImpl(key: KProperty1<T, V>, constructor: (v: V) -> R): R {
         val getPath = buildList { addAll(path); add(key.name) }

@@ -4,12 +4,19 @@ import site.pegasis.immukt.Producible
 import site.pegasis.immukt.toUnmodifiable
 
 // draft list for normal value
-class ValueDraftList<I>(list: List<I>) : ArrayList<I>(list.size), Producible<List<I>> {
-    init {
-        super.addAll(list)
+class ValueDraftList<I>(private val list: MutableList<I>) :
+    MutableList<I> by list,
+    Producible<List<I>> {
+
+    companion object {
+        fun <I> from(fromList: List<I>): ValueDraftList<I> {
+            val list = ArrayList<I>(fromList.size)
+            list.addAll(fromList)
+            return ValueDraftList(list)
+        }
     }
 
     override fun produce(): List<I> {
-        return this.toUnmodifiable()
+        return list.toUnmodifiable()
     }
 }
