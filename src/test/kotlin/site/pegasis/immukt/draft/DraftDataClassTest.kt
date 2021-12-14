@@ -310,6 +310,6 @@ class DraftDataClassTest {
         expectedData: Sample,
         recipe: (draftList: DraftDataClass<Sample>) -> Unit,
     ) {
-        assertEquals(expectedData, data.produce(recipe))
+        assertEquals(expectedData, data.produceWith(recipe))
     }
 }

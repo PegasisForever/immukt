@@ -1,7 +1,7 @@
 package site.pegasis.immukt.performance
 
 import site.pegasis.immukt.DataClass
-import site.pegasis.immukt.draft.produce
+import site.pegasis.immukt.draft.produceWith
 import site.pegasis.immukt.measureAvgTimeNs
 import java.text.DecimalFormat
 import kotlin.test.Test
@@ -35,7 +35,7 @@ class PerformanceTest {
                 )
             },
             {
-                data.produce {
+                data.produceWith {
                     it[Party::people][0][Person::age] = 19
                 }
             }
@@ -52,7 +52,7 @@ class PerformanceTest {
                 )
             },
             {
-                data.produce {
+                data.produceWith {
                     it[Party::time] = 100
                 }
             }

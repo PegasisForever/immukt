@@ -1,6 +1,6 @@
 package site.pegasis.immukt
 
-import site.pegasis.immukt.draft.produce
+import site.pegasis.immukt.draft.produceWith
 
 data class Person(val name: String, val age: Int) : DataClass
 
@@ -26,7 +26,7 @@ fun main() {
         newList,
     )
 
-    val newData2 = data.produce {
+    val newData2 = data.produceWith {
         it[Party::people][0][Person::name] = "Awa"
     }
 

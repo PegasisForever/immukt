@@ -8,7 +8,7 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 
-inline fun <T : DataClass> T.produce(recipe: (draft: DraftDataClass<T>) -> Unit): T {
+inline fun <T : DataClass> T.produceWith(recipe: (draft: DraftDataClass<T>) -> Unit): T {
     return DraftDataClass(this).apply(recipe).produce()
 }
 
