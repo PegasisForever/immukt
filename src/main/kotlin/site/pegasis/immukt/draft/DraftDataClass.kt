@@ -5,8 +5,6 @@ import site.pegasis.immukt.Producible
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.primaryConstructor
 
 inline fun <T : DataClass> T.produceWith(recipe: (draft: DraftDataClass<T>) -> Unit): T {
     return DraftDataClass(this).apply(recipe).produce()
@@ -81,7 +79,7 @@ class DraftDataClass<T : DataClass>(
         val params = Array(constructor.parameters.size) { i ->
             val param = constructor.parameters[i]
             when (val cached = changeCache[param.name]) {
-                null -> properties[param.name]!!.call(data)
+                null -> properties[param.name]!!(data)
                 is Producible<*> -> cached.produce()
                 else -> cached
             }
@@ -108,7 +106,7 @@ class DraftDataClass<T : DataClass>(
 
     companion object {
         private data class ClassRefl(
-            val properties: Map<String, KProperty1.Getter<out DataClass, Any?>>,
+            val properties: Map<String, (instance: DataClass) -> Any?>,
             val constructor: KFunction<DataClass>
         )
 
@@ -120,8 +118,10 @@ class DraftDataClass<T : DataClass>(
                 cached
             } else {
                 val classRefl = ClassRefl(
-                    kClass.declaredMemberProperties.associate { it.name to it.getter },
-                    kClass.primaryConstructor!!,
+                    kClass.members.associate {
+                        it.name to { instance -> it.call(instance) }
+                    },
+                    kClass.constructors.first(),
                 )
                 classPropertiesCache[kClass] = classRefl
                 classRefl
