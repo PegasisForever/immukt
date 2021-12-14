@@ -2,6 +2,8 @@ package site.pegasis.immukt.draft
 
 import site.pegasis.immukt.DataClass
 import site.pegasis.immukt.Producible
+import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
@@ -18,10 +20,6 @@ class DraftDataClass<T : DataClass>(
 ) : Producible<T> {
     private val changeCache: HashMap<String, Any?> = hashMapOf()
     private var produceCache: T? = data
-
-    init {
-        assert(data::class.isData)
-    }
 
     // get normal value
     operator fun <V> get(key: KProperty1<T, V>): V {
@@ -56,13 +54,15 @@ class DraftDataClass<T : DataClass>(
     operator fun <V : Map<K, MV>, K, MV> get(key: KProperty1<T, V>) = getImpl(key, ValueDraftMap.Companion::from)
 
     private inline fun <V, reified R> getImpl(key: KProperty1<T, V>, constructor: (v: V) -> R): R {
-        return when (val cached = changeCache[key.name]) {
-            null -> constructor(key.get(data)).also {  // not cached
-                produceCache = null
-                changeCache[key.name] = it
-            }
-            is R -> cached                             // cached draft
-            else -> constructor(cached as V).also {    // cached value
+        val cached = changeCache[key.name]
+        return if (cached is R) {                 // cached draft
+            cached
+        } else {
+            if (cached == null) {
+                constructor(key.get(data))        // not cached
+            } else {
+                constructor(cached as V)          // cached value
+            }.also {
                 produceCache = null
                 changeCache[key.name] = it
             }
@@ -76,9 +76,8 @@ class DraftDataClass<T : DataClass>(
 
     override fun produce(): T {
         if (produceCache != null) return produceCache!!
-        val klass = data::class
-        val properties = klass.declaredMemberProperties.associate { it.name to it.getter }
-        val constructor = klass.primaryConstructor!!
+
+        val (properties, constructor) = getClassRefl(data::class)
         val params = Array(constructor.parameters.size) { i ->
             val param = constructor.parameters[i]
             when (val cached = changeCache[param.name]) {
@@ -88,7 +87,7 @@ class DraftDataClass<T : DataClass>(
             }
         }
 
-        produceCache = constructor.call(*params)
+        produceCache = constructor.call(*params) as T
         return produceCache!!
     }
 
@@ -105,5 +104,28 @@ class DraftDataClass<T : DataClass>(
 
     override fun hashCode(): Int {
         return produce().hashCode().inv()
+    }
+
+    companion object {
+        private data class ClassRefl(
+            val properties: Map<String, KProperty1.Getter<out DataClass, Any?>>,
+            val constructor: KFunction<DataClass>
+        )
+
+        private val classPropertiesCache = hashMapOf<KClass<out DataClass>, ClassRefl>()
+
+        private fun <T : DataClass> getClassRefl(kClass: KClass<out T>): ClassRefl {
+            val cached = classPropertiesCache[kClass]
+            return if (cached != null) {
+                cached
+            } else {
+                val classRefl = ClassRefl(
+                    kClass.declaredMemberProperties.associate { it.name to it.getter },
+                    kClass.primaryConstructor!!,
+                )
+                classPropertiesCache[kClass] = classRefl
+                classRefl
+            }
+        }
     }
 }

@@ -3,7 +3,8 @@ package site.pegasis.immukt.draft
 import site.pegasis.immukt.DataClass
 import site.pegasis.immukt.Producible
 import site.pegasis.immukt.mapToSet
-import site.pegasis.immukt.toUnmodifiable
+
+import kotlin.collections.ArrayList
 
 // draft list for data classes
 class DataDraftList<I : DataClass>(private val list: MutableList<DraftDataClass<I>>) :

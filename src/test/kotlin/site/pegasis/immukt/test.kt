@@ -27,8 +27,9 @@ fun main() {
     )
 
     val newData2 = data.produce {
-        it[Party::people][0][Person::age] = 19
+        it[Party::people][0][Person::name] = "Awa"
     }
 
-    println(newData2)
+    println("-----")
+    println(newData2.people[1])
 }
