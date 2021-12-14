@@ -3,7 +3,6 @@ package site.pegasis.immukt.draft
 import site.pegasis.immukt.DataClass
 import site.pegasis.immukt.Producible
 import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty1
 
 inline fun <T : DataClass> T.produceWith(recipe: (draft: DraftDataClass<T>) -> Unit): T {
@@ -75,17 +74,17 @@ class DraftDataClass<T : DataClass>(
     override fun produce(): T {
         if (produceCache != null) return produceCache!!
 
-        val (properties, constructor) = getClassRefl(data::class)
-        val params = Array(constructor.parameters.size) { i ->
-            val param = constructor.parameters[i]
-            when (val cached = changeCache[param.name]) {
-                null -> properties[param.name]!!(data)
+        val (propertyGetters, paramNames, constructorFun) = getClassRefl(data::class)
+        val params = Array(paramNames.size) { i ->
+            val paramName = paramNames[i]
+            when (val cached = changeCache[paramName]) {
+                null -> propertyGetters[paramName]!!(data)
                 is Producible<*> -> cached.produce()
                 else -> cached
             }
         }
 
-        produceCache = constructor.call(*params) as T
+        produceCache = constructorFun(params) as T
         return produceCache!!
     }
 
@@ -105,9 +104,10 @@ class DraftDataClass<T : DataClass>(
     }
 
     companion object {
-        private data class ClassRefl(
-            val properties: Map<String, (instance: DataClass) -> Any?>,
-            val constructor: KFunction<DataClass>
+        internal data class ClassRefl(
+            val propertyGetters: Map<String, (instance: DataClass) -> Any?>,
+            val constructorParamNames: List<String>,
+            val constructorFun: (params: Array<Any?>) -> DataClass,
         )
 
         private val classPropertiesCache = hashMapOf<KClass<out DataClass>, ClassRefl>()
@@ -121,7 +121,8 @@ class DraftDataClass<T : DataClass>(
                     kClass.members.associate {
                         it.name to { instance -> it.call(instance) }
                     },
-                    kClass.constructors.first(),
+                    kClass.constructors.first().parameters.map { it.name!! },
+                    { params -> kClass.constructors.first().call(*params) }
                 )
                 classPropertiesCache[kClass] = classRefl
                 classRefl
