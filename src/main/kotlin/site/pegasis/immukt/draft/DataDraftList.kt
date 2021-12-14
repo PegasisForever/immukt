@@ -20,10 +20,58 @@ class DataDraftList<I : DataClass>(private val list: MutableList<DraftDataClass<
         }
     }
 
+    private inner class ProducedList(private val list: List<DraftDataClass<I>>) : List<I> {
+        override val size: Int
+            get() = list.size
+
+        override fun contains(element: I) = list.contains(element.draft)
+
+        override fun containsAll(elements: Collection<I>): Boolean {
+            for (element in elements) {
+                if (!list.contains(element.draft)) return false
+            }
+            return true
+        }
+
+        override operator fun get(index: Int) = list[index].produce()
+
+        override fun indexOf(element: I) = list.indexOf(element.draft)
+
+        override fun isEmpty() = list.isEmpty()
+
+        override fun lastIndexOf(element: I) = list.lastIndexOf(element.draft)
+
+        override fun subList(fromIndex: Int, toIndex: Int) = ProducedList(list.subList(fromIndex, toIndex))
+
+        override fun iterator() = object : Iterator<I> {
+            private val it = list.iterator()
+
+            override fun hasNext() = it.hasNext()
+
+            override fun next() = it.next().produce()
+        }
+
+        private inner class ProducedListIterator(private val it: ListIterator<DraftDataClass<I>>) : ListIterator<I> {
+            override fun hasNext() = it.hasNext()
+
+            override fun hasPrevious() = it.hasPrevious()
+
+            override fun next() = it.next().produce()
+
+            override fun nextIndex() = it.nextIndex()
+
+            override fun previous() = it.previous().produce()
+
+            override fun previousIndex() = it.previousIndex()
+        }
+
+        override fun listIterator() = ProducedListIterator(list.listIterator())
+
+        override fun listIterator(index: Int) = ProducedListIterator(list.listIterator(index))
+    }
+
     override fun produce(): List<I> {
-        return map {
-            it.produce()
-        }.toUnmodifiable()
+        return ProducedList(list)
     }
 
     fun contains(element: I): Boolean {
@@ -31,7 +79,10 @@ class DataDraftList<I : DataClass>(private val list: MutableList<DraftDataClass<
     }
 
     fun containsAllData(elements: Collection<I>): Boolean {
-        return containsAll(elements.map { it.draft })
+        for (element in elements) {
+            if (!contains(element.draft)) return false
+        }
+        return true
     }
 
     operator fun set(index: Int, element: I): I {
