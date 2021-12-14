@@ -62,10 +62,15 @@ class PerformanceTest {
     private val decimalFormat = DecimalFormat("#.##")
 
     private inline fun compareTime(manual: () -> Party, immuKt: () -> Party) {
-        val manualTime = measureAvgTimeNs { manual() }
-        val immuKtTime = measureAvgTimeNs { immuKt() }
-        println("manual: ${decimalFormat.format(manualTime)}ns")
-        println("immuKt: ${decimalFormat.format(immuKtTime)}ns")
-        println("(${decimalFormat.format(immuKtTime / manualTime)}x slower)")
+        if (System.getenv("PROFILE") != null) {
+            val immuKtTime = measureAvgTimeNs(30000000) { immuKt() }
+            println("immuKt: ${decimalFormat.format(immuKtTime)}ns")
+        } else {
+            val manualTime = measureAvgTimeNs { manual() }
+            val immuKtTime = measureAvgTimeNs { immuKt() }
+            println("manual: ${decimalFormat.format(manualTime)}ns")
+            println("immuKt: ${decimalFormat.format(immuKtTime)}ns")
+            println("(${decimalFormat.format(immuKtTime / manualTime)}x slower)")
+        }
     }
 }
