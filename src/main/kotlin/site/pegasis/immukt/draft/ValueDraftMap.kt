@@ -16,7 +16,7 @@ class ValueDraftMap<K, V>(private val map: MutableMap<K, V>) :
         }
     }
 
-    override fun produce(): Map<K, V> {
+    override fun produce(lazy: Boolean): Map<K, V> {
         return map.toUnmodifiable()
     }
 }

@@ -16,7 +16,7 @@ class ValueDraftSet<I>(private val set: MutableSet<I>) :
         }
     }
 
-    override fun produce(): Set<I> {
+    override fun produce(lazy: Boolean): Set<I> {
         return set.toUnmodifiable()
     }
 }

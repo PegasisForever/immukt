@@ -194,7 +194,10 @@ class DraftDataClassTest {
             map["a"]!![Nested::str] = "test"
             map.remove("b", Nested("qvq"))
             map["e"] = Nested("eve")
-            assertEquals(mapOf("a" to Nested("test"), "c" to Nested("uwu"), "e" to Nested("eve")).mapToDraft(), it[Sample::dataMap])
+            assertEquals(
+                mapOf("a" to Nested("test"), "c" to Nested("uwu"), "e" to Nested("eve")).mapToDraft(),
+                it[Sample::dataMap]
+            )
         }
 
         assertDraftData(finalValue) {
@@ -203,7 +206,10 @@ class DraftDataClassTest {
 
             map.remove("b", Nested("qvq"))
             map["e"] = Nested("eve")
-            assertEquals(mapOf("a" to Nested("test"), "c" to Nested("uwu"), "e" to Nested("eve")).mapToDraft(), it[Sample::dataMap])
+            assertEquals(
+                mapOf("a" to Nested("test"), "c" to Nested("uwu"), "e" to Nested("eve")).mapToDraft(),
+                it[Sample::dataMap]
+            )
         }
     }
 
@@ -310,6 +316,6 @@ class DraftDataClassTest {
         expectedData: Sample,
         recipe: (draftList: DraftDataClass<Sample>) -> Unit,
     ) {
-        assertEquals(expectedData, data.produceWith(recipe))
+        assertEquals(expectedData, data.produceWith(recipe = recipe))
     }
 }

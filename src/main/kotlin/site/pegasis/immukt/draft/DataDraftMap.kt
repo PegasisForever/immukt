@@ -3,6 +3,7 @@ package site.pegasis.immukt.draft
 import site.pegasis.immukt.DataClass
 import site.pegasis.immukt.Producible
 import site.pegasis.immukt.mapToSet
+import site.pegasis.immukt.toUnmodifiable
 
 // draft map K -> data class
 class DataDraftMap<K, V : DataClass>(private val map: MutableMap<K, DraftDataClass<V>>) :
@@ -109,8 +110,12 @@ class DataDraftMap<K, V : DataClass>(private val map: MutableMap<K, DraftDataCla
         override fun isEmpty() = map.isEmpty()
     }
 
-    override fun produce(): Map<K, V> {
-        return ProducedMap(map)
+    override fun produce(lazy: Boolean): Map<K, V> = if (lazy) {
+        ProducedMap(map)
+    } else {
+        map.mapValues {
+            it.value.produce(lazy)
+        }.toUnmodifiable()
     }
 
     fun containsValue(value: V): Boolean {

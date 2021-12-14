@@ -5,7 +5,7 @@ import site.pegasis.immukt.Producible
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 
-inline fun <T : DataClass> T.produceWith(recipe: (draft: DraftDataClass<T>) -> Unit): T {
+inline fun <T : DataClass> T.produceWith(lazy: Boolean = true, recipe: (draft: DraftDataClass<T>) -> Unit): T {
     return DraftDataClass(this).apply(recipe).produce()
 }
 
@@ -71,7 +71,7 @@ class DraftDataClass<T : DataClass>(
         changeCache[key.name] = value
     }
 
-    override fun produce(): T {
+    override fun produce(lazy: Boolean): T {
         if (produceCache != null) return produceCache!!
 
         val (propertyGetters, paramNames, constructorFun) = getClassRefl(data::class)
@@ -79,7 +79,7 @@ class DraftDataClass<T : DataClass>(
             val paramName = paramNames[i]
             when (val cached = changeCache[paramName]) {
                 null -> propertyGetters[paramName]!!(data)
-                is Producible<*> -> cached.produce()
+                is Producible<*> -> cached.produce(lazy)
                 else -> cached
             }
         }

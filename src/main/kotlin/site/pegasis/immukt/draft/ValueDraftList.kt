@@ -16,7 +16,7 @@ class ValueDraftList<I>(private val list: MutableList<I>) :
         }
     }
 
-    override fun produce(): List<I> {
+    override fun produce(lazy: Boolean): List<I> {
         return list.toUnmodifiable()
     }
 }

@@ -43,6 +43,29 @@ class PerformanceTest {
     }
 
     @Test
+    fun `change pega's age to 19 (not lazy)`() {
+        compareTime(
+            {
+                val newList = ArrayList<Person>()
+                newList.addAll(data.people)
+                newList[0] = Person(
+                    newList[0].name,
+                    19,
+                )
+                Party(
+                    data.time,
+                    newList,
+                )
+            },
+            {
+                data.produceWith(false) {
+                    it[Party::people][0][Person::age] = 19
+                }
+            }
+        )
+    }
+
+    @Test
     fun `change party time to 100`() {
         compareTime(
             {

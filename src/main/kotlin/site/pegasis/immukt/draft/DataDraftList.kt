@@ -3,8 +3,7 @@ package site.pegasis.immukt.draft
 import site.pegasis.immukt.DataClass
 import site.pegasis.immukt.Producible
 import site.pegasis.immukt.mapToSet
-
-import kotlin.collections.ArrayList
+import site.pegasis.immukt.toUnmodifiable
 
 // draft list for data classes
 class DataDraftList<I : DataClass>(private val list: MutableList<DraftDataClass<I>>) :
@@ -71,8 +70,12 @@ class DataDraftList<I : DataClass>(private val list: MutableList<DraftDataClass<
         override fun listIterator(index: Int) = ProducedListIterator(list.listIterator(index))
     }
 
-    override fun produce(): List<I> {
-        return ProducedList(list)
+    override fun produce(lazy: Boolean): List<I> = if (lazy) {
+        ProducedList(list)
+    } else {
+        list.map {
+            it.produce(lazy)
+        }.toUnmodifiable()
     }
 
     fun contains(element: I): Boolean {

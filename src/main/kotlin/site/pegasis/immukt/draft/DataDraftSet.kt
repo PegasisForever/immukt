@@ -2,6 +2,8 @@ package site.pegasis.immukt.draft
 
 import site.pegasis.immukt.DataClass
 import site.pegasis.immukt.Producible
+import site.pegasis.immukt.mapToSet
+import site.pegasis.immukt.toUnmodifiable
 
 // draft set for data classes
 class DataDraftSet<I : DataClass>(private val set: MutableSet<DraftDataClass<I>>) :
@@ -42,7 +44,13 @@ class DataDraftSet<I : DataClass>(private val set: MutableSet<DraftDataClass<I>>
         }
     }
 
-    override fun produce(): Set<I> = ProducedSet(set)
+    override fun produce(lazy: Boolean): Set<I> = if (lazy) {
+        ProducedSet(set)
+    } else {
+        set.mapToSet {
+            it.produce(lazy)
+        }.toUnmodifiable()
+    }
 
     fun add(element: I): Boolean {
         return add(element.draft)
