@@ -6,7 +6,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 
 inline fun <T : DataClass> T.produceWith(lazy: Boolean = true, recipe: (draft: DraftDataClass<T>) -> Unit): T {
-    return DraftDataClass(this).apply(recipe).produce()
+    return DraftDataClass(this).apply(recipe).produce(lazy)
 }
 
 inline val <T : DataClass> T.draft: DraftDataClass<T>
