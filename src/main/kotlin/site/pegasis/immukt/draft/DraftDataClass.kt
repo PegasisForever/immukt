@@ -9,6 +9,10 @@ inline fun <T : DataClass> T.produceWith(lazy: Boolean = true, recipe: (draft: D
     return DraftDataClass(this).apply(recipe).produce(lazy)
 }
 
+inline fun <T, D : Producible<T>> D.produceWith(lazy: Boolean = true, recipe: (draft: D) -> Unit): T {
+    return this.apply(recipe).produce(lazy)
+}
+
 inline val <T : DataClass> T.draft: DraftDataClass<T>
     get() = DraftDataClass(this)
 
