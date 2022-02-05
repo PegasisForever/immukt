@@ -2,7 +2,6 @@ site_name: ImmuKT | Docs
 theme:
   name: material
   features:
-    - navigation.instant
     - content.code.annotate
     - toc.integrate
   icon:
