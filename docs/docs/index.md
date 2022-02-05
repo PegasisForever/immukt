@@ -1,6 +1,60 @@
 # Introduction to ImmuKT
 
-ImmuKT is heavily inspired by [Immer](https://immerjs.github.io/immer/). Similar to Immer, ImmuKT allows you to work with nested immutable state safely and conveniently.
+ImmuKT is heavily inspired by [Immer](https://immerjs.github.io/immer/). Similar to Immer, ImmuKT allows you to work
+with nested immutable state safely and conveniently.
+
+## Installation
+
+=== "Gradle (Kotlin)"
+
+    ```kotlin
+    repositories {
+        // .....
+        maven{ url = uri("https://jitpack.io") }
+    }
+
+    dependencies {
+        // .....
+        implementation("com.github.PegasisForever:immukt:0.2.0")
+    }
+    ```
+
+=== "Gradle (Groovy)"
+
+    ```groovy
+    repositories {
+        // .....
+        maven{ url 'https://jitpack.io' }
+    }
+
+    dependencies {
+        // .....
+        implementation 'com.github.PegasisForever:immukt:0.2.0'
+    }
+    ```
+
+=== "Maven"
+
+    ```xml
+    <repositories>
+        <!-- ..... -->
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+
+    <dependencies>
+        <!-- ..... -->
+        <dependency>
+	        <groupId>com.github.PegasisForever</groupId>
+	        <artifactId>immukt</artifactId>
+	        <version>0.2.0</version>
+	    </dependency>
+    </dependencies>
+    ```
+
+## Quick Start
 
 Assuming we have the following data:
 
@@ -23,7 +77,7 @@ val party = Party(
 
 What would you do if you want to change Pega's age from 18 to 19?
 
-Without ImmuKT, you need to manually create a new list and copy every data like this:
+**Without ImmuKT**, you need to manually create a new list and copy every data like this:
 
 ```kotlin
 val newList = ArrayList<Person>()
@@ -38,7 +92,7 @@ val newParty = Party(
 )
 ```
 
-With ImmuKT, the operation become much easier:
+**With ImmuKT**, the operation become much easier:
 
 ```kotlin
 import site.pegasis.immukt.draft.produceWith
@@ -50,17 +104,21 @@ val newParty = party.produceWith {
 
 ## How does it work?
 
-ImmuKT keep tracks your changes in a temporary draft, after all the mutation is completed, ImmuKT produces the next state based on mutations to the draft.
+ImmuKT keep tracks your changes in a temporary draft, after all the mutation is completed, ImmuKT produces the next
+state based on mutations to the draft.
 
 ## What's the cost?
 
 ### Performance
 
-ImmuKT heavily utilizes reflection, it is usually 3x-10x slower than manual copying. However, it is still very fast for normal use cases. <u>In the party example above, manual copying takes 37 nanoseconds and ImmuKT takes 123 nanoseconds.</u> For benchmarks and optimization details, see [Performance](/1.performance/).
+ImmuKT heavily utilizes reflection, it is usually 3x-10x slower than manual copying. However, it is still very fast for
+normal use cases. <u>In the party example above, manual copying takes 37 nanoseconds and ImmuKT takes 123
+nanoseconds.</u> For benchmarks and optimization details, see [Performance](/3.performance/).
 
 ### Multiplatform
 
 - Kotlin/Native and Kotlin/JS don't have full reflection support
 - I don't use kotlin multiplatform in any of my projects
 
-It is technically possible to include multiplatform support with the current state of kotlin, see [Multiplatform Support](/2.multiplatform_support/).
+It is technically possible to include multiplatform support with the current state of kotlin,
+see [Multiplatform Support](/4.multiplatform_support/).

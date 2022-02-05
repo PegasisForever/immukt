@@ -4,6 +4,7 @@ theme:
   features:
     - navigation.instant
     - content.code.annotate
+    - toc.integrate
   icon:
     repo: fontawesome/brands/github
   palette:
@@ -25,3 +26,5 @@ markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
